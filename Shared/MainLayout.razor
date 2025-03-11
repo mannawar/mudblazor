@@ -1,0 +1,18 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>EmployeeManagement</PageTitle>
+
+<MudLayout>
+    <MudDrawer Open="true" Variant="DrawerVariant.Mini">
+        <MudList T="string">
+            <MudListItem Href="/employees">
+                <MudText>Employees</MudText>
+            </MudListItem>
+        </MudList>
+    </MudDrawer>
+
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
