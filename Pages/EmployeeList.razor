@@ -1,17 +1,17 @@
-﻿@page "/employees"
+@page "/employees"
 @using EmployeeManagement.Services
+@using static MudBlazor.CategoryTypes
 @inject EmployeeService EmployeeService
 
 
-<MudContainer  Class="pa-4">
+<MudContainer Fixed="true">
     <MudPaper Elevation="4" Class="pa-4">
         <MudText Typo="Typo.h4" Class="mb-4">Employee List</MudText>
 
-        <!-- Search Field -->
-        <MudTextField @bind-Value="searchQuery" Label="Search Employees..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" />
+        <MudTextField @bind-Value="searchQuery" Label="Search Employees..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" Immediate="true" />
 
-        <!-- Employee List -->
-        <MudTable Items="paginatedEmployees" Dense="true">
+
+        <MudTable Items="paginatedEmployees" Dense="true" Filter="new Func<Employee, bool>(FilterFunc)" >
             <ColGroup>
                 <col style="width: 20%;" />
                 <col style="width: 20%;" />
@@ -34,13 +34,14 @@
                 <MudTd>@emp.Salary.ToString("C")</MudTd>
             </RowTemplate>
         </MudTable>
-
-        <!-- Pagination -->
-        <MudPagination Page="@currentPage" PageCount="@(totalPages)" OnPageChanged="HandlePageChange" />
+        <MudPagination Selected="@currentPage" Count="@(totalPages)" SelectedChanged="HandlePageChange"/>
     </MudPaper>
 </MudContainer>
 
 @code {
+
+
+
     private string searchQuery = "";
     private List<Employee> employees = new();
     private List<Employee> paginatedEmployees = new();
@@ -52,15 +53,18 @@
     {
         employees = EmployeeService.GetEmployee();
         ApplyPagination();
+
+        // HandleSearch(searchQuery);
+        // HandlePageChange(currentPage);
     }
 
     private void ApplyPagination()
     {
         var filteredEmployees = employees
             .Where(e => string.IsNullOrEmpty(searchQuery) ||
-                        e.FirstName.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
-                        e.LastName.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
-                        e.JobTitle.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                        e.FirstName!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
+                        e.LastName!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
+                        e.JobTitle!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
             .ToList();
 
         totalPages = (int)Math.Ceiling(filteredEmployees.Count / (double)pageSize);
@@ -81,5 +85,20 @@
         ApplyPagination();
         StateHasChanged(); 
     }
+
+
+    private bool FilterFunc(Employee element)
+    {
+        if (string.IsNullOrWhiteSpace(searchQuery))
+            return true;
+        if (element.FirstName!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.LastName!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.JobTitle!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
 }
 
