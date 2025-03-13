@@ -5,13 +5,16 @@
 @using EmployeeManagement.Shared
 
 
-<EmployeeLayout Title="Employee List">
+
+<EmployeeLayout Title="Employees List">
 
     <MudTextField @bind-Value="searchQuery" Label="Search Employees..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" Immediate="true" OnKeyUp="HandleSearch" />
+    <MudItem class="d-inline-flex">
+        <MudSwitch T="bool" @bind-Checked="showAllData" Color="Color.Primary" Label="Show All Employees" Class="mb-4" ValueChanged="ToggleShowAll"/>
+        <MudSwitch T="bool" Color="Color.Primary" Label="change theme" Class="mb-4" ValueChanged="OnSystemPreferenceChanged" />
+    </MudItem>
 
-    <MudSwitch T="bool" @bind-Checked="showAllData" Color="Color.Primary" Label="Show All Employees" Class="mb-4" ValueChanged="ToggleShowAll"/>
-
-    <MudTable Items="paginatedEmployees" Dense="true" >
+    <MudTable Items="paginatedEmployees" Dense="true" Bordered=true>
         <ColGroup>
             <col style="width: 20%;" />
             <col style="width: 20%;" />
@@ -20,11 +23,11 @@
             <col style="width: 20%;" />
         </ColGroup>
         <HeaderContent>
-            <MudTh><strong>First Name</strong></MudTh>
-            <MudTh><strong>Last Name</strong></MudTh>
-            <MudTh><strong>Email</strong></MudTh>
-            <MudTh><strong>Job Title</strong></MudTh>
-            <MudTh><strong>Salary</strong></MudTh>
+            <MudTh style="background-color:cornflowerblue"><strong>First Name</strong></MudTh>
+            <MudTh style="background-color:cornflowerblue"><strong>Last Name</strong></MudTh>
+            <MudTh style="background-color:cornflowerblue"><strong>Email</strong></MudTh>
+            <MudTh style="background-color:cornflowerblue"><strong>Job Title</strong></MudTh>
+            <MudTh style="background-color:cornflowerblue"><strong>Salary</strong></MudTh>
         </HeaderContent>
         <RowTemplate Context="emp">
             <MudTd>@emp.FirstName</MudTd>
@@ -37,14 +40,15 @@
 
     @if (!showAllData)
     {
-        <MudPagination Selected="@currentPage" Count="@(totalPages)" SelectedChanged="HandlePageChange" />
+        <MudPagination Selected="@currentPage" Count="@(totalPages)" SelectedChanged="HandlePageChange" Class="pa-2" />
     }
 
 
 </EmployeeLayout>
 
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
 @code {
-
+    private bool _rightToLeft = true;
     private string searchQuery = "";
     private List<Employee> employees = new();
     private List<Employee> filteredEmployees = new();
@@ -100,6 +104,25 @@
         currentPage = 1;
         FilterAndPaginate();
         StateHasChanged();
+    }
+
+    private bool _isDarkMode;
+    private MudThemeProvider _mudThemeProvider = null!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+            StateHasChanged();
+        }
+    }
+
+    private Task OnSystemPreferenceChanged(bool newValue)
+    {
+        _isDarkMode = newValue;
+        StateHasChanged();
+        return Task.CompletedTask;
     }
 
 }
