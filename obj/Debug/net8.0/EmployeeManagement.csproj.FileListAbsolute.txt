@@ -1,11 +1,3 @@
-D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.csproj.AssemblyReference.cache
-D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.GeneratedMSBuildEditorConfig.editorconfig
-D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.AssemblyInfoInputs.cache
-D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.AssemblyInfo.cs
-D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.csproj.CoreCompileInputs.cache
-D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.MvcApplicationPartsAssemblyInfo.cache
-D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.RazorAssemblyInfo.cache
-D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.RazorAssemblyInfo.cs
 D:\projects\blazor\EmployeeManagement\EmployeeManagement\bin\Debug\net8.0\appsettings.Development.json
 D:\projects\blazor\EmployeeManagement\EmployeeManagement\bin\Debug\net8.0\appsettings.json
 D:\projects\blazor\EmployeeManagement\EmployeeManagement\bin\Debug\net8.0\EmployeeManagement.staticwebassets.runtime.json
@@ -29,6 +21,15 @@ D:\projects\blazor\EmployeeManagement\EmployeeManagement\bin\Debug\net8.0\Micros
 D:\projects\blazor\EmployeeManagement\EmployeeManagement\bin\Debug\net8.0\Microsoft.JSInterop.dll
 D:\projects\blazor\EmployeeManagement\EmployeeManagement\bin\Debug\net8.0\MudBlazor.dll
 D:\projects\blazor\EmployeeManagement\EmployeeManagement\bin\Debug\net8.0\MudBlazor.ThemeManager.dll
+D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.csproj.AssemblyReference.cache
+D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.AssemblyInfoInputs.cache
+D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.AssemblyInfo.cs
+D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.csproj.CoreCompileInputs.cache
+D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.MvcApplicationPartsAssemblyInfo.cache
+D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.RazorAssemblyInfo.cache
+D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.RazorAssemblyInfo.cs
+D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\EmployeeManagement.sourcelink.json
 D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\scopedcss\Shared\MainLayout.razor.rz.scp.css
 D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\scopedcss\Shared\NavMenu.razor.rz.scp.css
 D:\projects\blazor\EmployeeManagement\EmployeeManagement\obj\Debug\net8.0\scopedcss\bundle\EmployeeManagement.styles.css

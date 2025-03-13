@@ -1,0 +1,16 @@
+﻿<MudContainer Fixed="true">
+    <MudPaper Elevation="4" class="pa-4">
+        <MudText Typo="Typo.h4" class="mb-4">@Title</MudText>
+        <MudDivider />
+        @ChildContent
+    </MudPaper>
+</MudContainer>
+
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } = null!;
+}

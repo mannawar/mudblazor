@@ -2,102 +2,104 @@
 @using EmployeeManagement.Services
 @using static MudBlazor.CategoryTypes
 @inject EmployeeService EmployeeService
+@using EmployeeManagement.Shared
 
 
-<MudContainer Fixed="true">
-    <MudPaper Elevation="4" Class="pa-4">
-        <MudText Typo="Typo.h4" Class="mb-4">Employee List</MudText>
+<EmployeeLayout Title="Employee List">
 
-        <MudTextField @bind-Value="searchQuery" Label="Search Employees..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" Immediate="true" />
+    <MudTextField @bind-Value="searchQuery" Label="Search Employees..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" Immediate="true" OnKeyUp="HandleSearch" />
+
+    <MudSwitch T="bool" @bind-Checked="showAllData" Color="Color.Primary" Label="Show All Employees" Class="mb-4" ValueChanged="ToggleShowAll"/>
+
+    <MudTable Items="paginatedEmployees" Dense="true" >
+        <ColGroup>
+            <col style="width: 20%;" />
+            <col style="width: 20%;" />
+            <col style="width: 20%;" />
+            <col style="width: 20%;" />
+            <col style="width: 20%;" />
+        </ColGroup>
+        <HeaderContent>
+            <MudTh><strong>First Name</strong></MudTh>
+            <MudTh><strong>Last Name</strong></MudTh>
+            <MudTh><strong>Email</strong></MudTh>
+            <MudTh><strong>Job Title</strong></MudTh>
+            <MudTh><strong>Salary</strong></MudTh>
+        </HeaderContent>
+        <RowTemplate Context="emp">
+            <MudTd>@emp.FirstName</MudTd>
+            <MudTd>@emp.LastName</MudTd>
+            <MudTd>@emp.Email</MudTd>
+            <MudTd>@emp.JobTitle</MudTd>
+            <MudTd>@emp.Salary.ToString("C")</MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    @if (!showAllData)
+    {
+        <MudPagination Selected="@currentPage" Count="@(totalPages)" SelectedChanged="HandlePageChange" />
+    }
 
 
-        <MudTable Items="paginatedEmployees" Dense="true" Filter="new Func<Employee, bool>(FilterFunc)" >
-            <ColGroup>
-                <col style="width: 20%;" />
-                <col style="width: 20%;" />
-                <col style="width: 20%;" />
-                <col style="width: 20%;" />
-                <col style="width: 20%;" />
-            </ColGroup>
-            <HeaderContent>
-                <MudTh>First Name</MudTh>
-                <MudTh>Last Name</MudTh>
-                <MudTh>Email</MudTh>
-                <MudTh>Job Title</MudTh>
-                <MudTh>Salary</MudTh>
-            </HeaderContent>
-            <RowTemplate Context="emp">
-                <MudTd>@emp.FirstName</MudTd>
-                <MudTd>@emp.LastName</MudTd>
-                <MudTd>@emp.Email</MudTd>
-                <MudTd>@emp.JobTitle</MudTd>
-                <MudTd>@emp.Salary.ToString("C")</MudTd>
-            </RowTemplate>
-        </MudTable>
-        <MudPagination Selected="@currentPage" Count="@(totalPages)" SelectedChanged="HandlePageChange"/>
-    </MudPaper>
-</MudContainer>
+</EmployeeLayout>
 
 @code {
 
-
-
     private string searchQuery = "";
     private List<Employee> employees = new();
+    private List<Employee> filteredEmployees = new();
     private List<Employee> paginatedEmployees = new();
     private int pageSize = 2;
     private int currentPage = 1;
     private int totalPages = 1;
+    private bool showAllData = false;
 
     protected override void OnInitialized()
     {
         employees = EmployeeService.GetEmployee();
-        ApplyPagination();
-
-        // HandleSearch(searchQuery);
-        // HandlePageChange(currentPage);
+        FilterAndPaginate();
     }
 
-    private void ApplyPagination()
+    private void FilterAndPaginate()
     {
-        var filteredEmployees = employees
+        filteredEmployees = employees
             .Where(e => string.IsNullOrEmpty(searchQuery) ||
                         e.FirstName!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
                         e.LastName!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
                         e.JobTitle!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
             .ToList();
 
-        totalPages = (int)Math.Ceiling(filteredEmployees.Count / (double)pageSize);
-        paginatedEmployees = filteredEmployees.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
+        if (showAllData)
+        {
+            paginatedEmployees = filteredEmployees;
+        }
+        else
+        {
+            totalPages = (int)Math.Ceiling(filteredEmployees.Count / (double)pageSize);
+            paginatedEmployees = filteredEmployees.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
+        }
     }
 
     private void HandlePageChange(int page)
     {
         currentPage = page;
-        ApplyPagination();
+        FilterAndPaginate();
         StateHasChanged();
     }
 
-    private void HandleSearch(string value)
+    private void HandleSearch(KeyboardEventArgs e)
     {
-        searchQuery = value;
         currentPage = 1; 
-        ApplyPagination();
+        FilterAndPaginate();
         StateHasChanged(); 
     }
 
-
-    private bool FilterFunc(Employee element)
+    private void ToggleShowAll(bool value)
     {
-        if (string.IsNullOrWhiteSpace(searchQuery))
-            return true;
-        if (element.FirstName!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (element.LastName!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (element.JobTitle!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
-            return true;
-        return false;
+        showAllData = value;
+        currentPage = 1;
+        FilterAndPaginate();
+        StateHasChanged();
     }
 
 }
