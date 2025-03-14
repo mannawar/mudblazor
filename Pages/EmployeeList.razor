@@ -7,42 +7,62 @@
 
 
 <EmployeeLayout Title="Employees List">
+    <ChildContent>
+        <MudTextField @bind-Value="searchQuery" Label="Search Employees..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" Immediate="true" OnKeyUp="HandleSearch" />
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="string" Value="selectedJobTitle" Label="Filter by job title" Placeholder="Select a job title" ValueChanged="OnJobTitleChanged">
+                    <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
+                    @foreach(var job in jobTitles)
+                    {
+                        <MudSelectItem Value="@job">@job</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="string" Value="selectedSalaryRange" Label="Filter by salary" Placeholder="Select salary range" ValueChanged="OnSalaryRangeChanged">
+                    <MudSelectItem T="string" Value="@(string.Empty)">All</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("0-50000")">Below 50K</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("50000-70000")">50K - 70K</MudSelectItem>
+                    <MudSelectItem T="string"  Value="@("70000-100000")">Above 70K</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
 
-    <MudTextField @bind-Value="searchQuery" Label="Search Employees..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" Immediate="true" OnKeyUp="HandleSearch" />
-    <MudItem class="d-inline-flex">
-        <MudSwitch T="bool" @bind-Checked="showAllData" Color="Color.Primary" Label="Show All Employees" Class="mb-4" ValueChanged="ToggleShowAll"/>
-        <MudSwitch T="bool" Color="Color.Primary" Label="change theme" Class="mb-4" ValueChanged="OnSystemPreferenceChanged" />
-    </MudItem>
+        <MudItem class="d-inline-flex">
+            <MudSwitch T="bool" @bind-Checked="showAllData" Color="Color.Primary" Label="Show All Employees" Class="mb-4" ValueChanged="ToggleShowAll"/>
+            <MudSwitch T="bool" Color="Color.Primary" Label="change theme" Class="mb-4" ValueChanged="OnSystemPreferenceChanged" />
+        </MudItem>
 
-    <MudTable Items="paginatedEmployees" Dense="true" Bordered=true>
-        <ColGroup>
-            <col style="width: 20%;" />
-            <col style="width: 20%;" />
-            <col style="width: 20%;" />
-            <col style="width: 20%;" />
-            <col style="width: 20%;" />
-        </ColGroup>
-        <HeaderContent>
-            <MudTh style="background-color:cornflowerblue"><strong>First Name</strong></MudTh>
-            <MudTh style="background-color:cornflowerblue"><strong>Last Name</strong></MudTh>
-            <MudTh style="background-color:cornflowerblue"><strong>Email</strong></MudTh>
-            <MudTh style="background-color:cornflowerblue"><strong>Job Title</strong></MudTh>
-            <MudTh style="background-color:cornflowerblue"><strong>Salary</strong></MudTh>
-        </HeaderContent>
-        <RowTemplate Context="emp">
-            <MudTd>@emp.FirstName</MudTd>
-            <MudTd>@emp.LastName</MudTd>
-            <MudTd>@emp.Email</MudTd>
-            <MudTd>@emp.JobTitle</MudTd>
-            <MudTd>@emp.Salary.ToString("C")</MudTd>
-        </RowTemplate>
-    </MudTable>
+        <MudTable Items="paginatedEmployees" Dense="true" Bordered=true>
+            <ColGroup>
+                <col style="width: 20%;" />
+                <col style="width: 20%;" />
+                <col style="width: 20%;" />
+                <col style="width: 20%;" />
+                <col style="width: 20%;" />
+            </ColGroup>
+            <HeaderContent>
+                <MudTh style="background-color:cornflowerblue"><strong>First Name</strong></MudTh>
+                <MudTh style="background-color:cornflowerblue"><strong>Last Name</strong></MudTh>
+                <MudTh style="background-color:cornflowerblue"><strong>Email</strong></MudTh>
+                <MudTh style="background-color:cornflowerblue"><strong>Job Title</strong></MudTh>
+                <MudTh style="background-color:cornflowerblue"><strong>Salary</strong></MudTh>
+            </HeaderContent>
+            <RowTemplate Context="emp">
+                <MudTd>@emp.FirstName</MudTd>
+                <MudTd>@emp.LastName</MudTd>
+                <MudTd>@emp.Email</MudTd>
+                <MudTd>@emp.JobTitle</MudTd>
+                <MudTd>@emp.Salary.ToString("C")</MudTd>
+            </RowTemplate>
+        </MudTable>
 
-    @if (!showAllData)
-    {
-        <MudPagination Selected="@currentPage" Count="@(totalPages)" SelectedChanged="HandlePageChange" Class="pa-2" />
-    }
-
+        @if (!showAllData)
+        {
+            <MudPagination Selected="@currentPage" Count="@(totalPages)" SelectedChanged="HandlePageChange" Class="pa-2" />
+        }
+    </ChildContent>
 
 </EmployeeLayout>
 
@@ -50,6 +70,8 @@
 @code {
     private bool _rightToLeft = true;
     private string searchQuery = "";
+    private string selectedJobTitle = "";
+    private string selectedSalaryRange = string.Empty;
     private List<Employee> employees = new();
     private List<Employee> filteredEmployees = new();
     private List<Employee> paginatedEmployees = new();
@@ -57,20 +79,45 @@
     private int currentPage = 1;
     private int totalPages = 1;
     private bool showAllData = false;
+    private List<string> jobTitles = new();
 
     protected override void OnInitialized()
     {
         employees = EmployeeService.GetEmployee();
+        jobTitles = employees.Select(e => e.JobTitle).Distinct().ToList()!;
         FilterAndPaginate();
     }
+
+    private void OnJobTitleChanged(string value)
+    {
+        selectedJobTitle = value;
+        currentPage = 1; 
+        FilterAndPaginate();
+        StateHasChanged();
+    }
+
+    private void OnSalaryRangeChanged(string value)
+    {
+        selectedSalaryRange = value;
+        currentPage = 1; 
+        FilterAndPaginate();
+        StateHasChanged();
+    }
+
 
     private void FilterAndPaginate()
     {
         filteredEmployees = employees
-            .Where(e => string.IsNullOrEmpty(searchQuery) ||
-                        e.FirstName!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
-                        e.LastName!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
-                        e.JobTitle!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+            .Where(e =>
+                (string.IsNullOrEmpty(searchQuery) ||
+                e.FirstName!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
+                e.LastName!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
+                e.JobTitle!.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)) &&
+
+                (string.IsNullOrEmpty(selectedJobTitle) || e.JobTitle == selectedJobTitle) &&
+
+                (string.IsNullOrEmpty(selectedSalaryRange) || CheckSalaryFilter(e.Salary, selectedSalaryRange))
+            )
             .ToList();
 
         if (showAllData)
@@ -83,6 +130,17 @@
             paginatedEmployees = filteredEmployees.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
         }
     }
+
+
+    private bool CheckSalaryFilter(decimal salary, string range)
+    {
+        if (string.IsNullOrEmpty(range)) return true;
+
+        var parts = range.Split('-').Select(int.Parse).ToArray();
+
+        return salary >= parts[0] && salary <= parts[1];
+    }
+
 
     private void HandlePageChange(int page)
     {
