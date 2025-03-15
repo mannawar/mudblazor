@@ -3,11 +3,12 @@
 @using static MudBlazor.CategoryTypes
 @inject EmployeeService EmployeeService
 @using EmployeeManagement.Shared
-
+@inject IDialogService DialogService
 
 
 <EmployeeLayout Title="Employees List">
     <ChildContent>
+        <MudButton OnClick="HandleAddEmployee" Color="Color.Primary">Add Employee</MudButton>
         <MudTextField @bind-Value="searchQuery" Label="Search Employees..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" Immediate="true" OnKeyUp="HandleSearch" />
         <MudGrid>
             <MudItem xs="12" sm="6">
@@ -86,6 +87,21 @@
         employees = EmployeeService.GetEmployee();
         jobTitles = employees.Select(e => e.JobTitle).Distinct().ToList()!;
         FilterAndPaginate();
+    }
+
+    private async Task HandleAddEmployee()
+    {
+        var parameters = new DialogParameters();
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var dialog = await DialogService.ShowAsync<AddEmployeeDialog>("Add Employee", parameters, options);
+        var result = await dialog.Result;
+
+        if (result is not null && !result.Canceled && result.Data is Employee newEmployee)
+        {
+            employees.Add(newEmployee);
+            FilterAndPaginate();
+            StateHasChanged();
+        }
     }
 
     private void OnJobTitleChanged(string value)

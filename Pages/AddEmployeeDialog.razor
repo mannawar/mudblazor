@@ -1,0 +1,27 @@
+﻿@using MudBlazor
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudDialog Title="Add Employee">
+    <DialogContent>
+        <MudTextField @bind-Value="newEmployee.FirstName" Label="First Name" Required="true" />
+        <MudTextField @bind-Value="newEmployee.LastName" Label="Last Name" Required="true" />
+        <MudTextField @bind-Value="newEmployee.Email" Label="Email" Required="true" />
+        <MudTextField @bind-Value="newEmployee.JobTitle" Label="Job Title" Required="true" />
+        <MudTextField @bind-Value="newEmployee.Salary" Label="Salary" Required="true" InputType="InputType.Number" />
+
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="() => MudDialogInstance.Close(DialogResult.Ok(newEmployee))" Color="Color.Secondary">Save</MudButton>
+        <MudButton OnClick="() => MudDialogInstance.Close(DialogResult.Cancel())" Color="Color.Primary">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    private Employee newEmployee { get; set; } = new();
+
+    [CascadingParameter]
+    IMudDialogInstance MudDialogInstance { get; set; } = null!;
+}

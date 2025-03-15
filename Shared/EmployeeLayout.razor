@@ -1,11 +1,6 @@
 ﻿<MudContainer Fixed="true">
     <MudPaper Elevation="4" class="pa-4">
         <MudText Typo="Typo.h4" class="mb-4">@Title</MudText>
-        <MudGrid>
-            <MudItem xs="12">
-                @FilterContent
-            </MudItem>
-        </MudGrid>
         <MudDivider class="my-4"/>
         @ChildContent
     </MudPaper>
@@ -19,6 +14,4 @@
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
-    [Parameter]
-    public RenderFragment? FilterContent { get; set; }
 }
