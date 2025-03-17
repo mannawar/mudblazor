@@ -1,0 +1,22 @@
+﻿<MudDialog>
+    <TitleContent>
+        Employee Details
+    </TitleContent>
+
+    <DialogContent>
+        @if (selectedEmployee != null)
+        {
+            <p><strong>Rank:</strong>@selectedEmployee.Rank</p>
+            <p><strong>Department:</strong>@selectedEmployee.Department</p>
+            <p><strong>Address:</strong>@(selectedEmployee.Address?.FirstOrDefault()?.Street ?? "NA"), @(selectedEmployee.Address?.FirstOrDefault()?.Zone ?? "NA"), @(selectedEmployee.Address?.FirstOrDefault()?.ZipCode ?? 12345)</p>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="() => MudDialogInstance.Close(DialogResult.Ok(true))">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code{
+    [Parameter] public Employee? selectedEmployee { get; set; }
+    [CascadingParameter] IMudDialogInstance MudDialogInstance { get; set; } = null!;
+}
